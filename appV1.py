@@ -3,7 +3,9 @@ from StFiles.MyProfile import myProfile
 from StFiles.stDBProcess import get_lists
 from StFiles.Layout import EXP_TITLES, FilterTabs
 import matplotlib.pyplot as plt
-from StFiles.Insurance import Test
+from StFiles.Insurance import InsMain
+#from StFiles.Transaction import Test2 # type: ignore
+#from StFiles.User import Test1 # type: ignore
 
 st.set_page_config(
     page_title="PhonePe Transaction Insights",
@@ -49,8 +51,14 @@ st.markdown(ss.summary)
 FilterTabs()
 
 if ss.tab_locked =="Insurance":
-    st.markdown("**Insurance Tab is Locked**")
-    Test()
+    InsMain()
+if ss.tab_locked =="Transaction":
+    st.markdown("**Transaction Tab is Locked**")
+    #Test2()
+if ss.tab_locked =="User":
+    st.markdown("**User Tab is Locked**")
+    #Test1()
+
 
 # for exp_title in EXP_TITLES:
 #     selected_key = f"{ss.tab_locked}_{exp_title}_selected" if ss.tab_locked else f"{LockedTab}_{exp_title}_selected"

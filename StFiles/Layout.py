@@ -95,4 +95,39 @@ def FilterTabs():
                     if ss.tab_locked == tab_name:
                         ss.tab_locked = None
                     st.success("Selections cleared.")
-    
+            
+#--------------------------------------------------First Graph--------------------------------------------------#
+
+            if ss.tab_locked is None and table_name == "agg_ins":
+                st.markdown("### Insurance Tab - First Graph")
+                cols = st.columns([1.5, 1.5 ,3])
+                with cols[0]:
+                    st.markdown("**Insurance | Year**")
+                    Query = f"Select year, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is null order by year"
+                with cols[1]:
+                    st.markdown("**Insurance | Quarter**")
+                    Query = f"Select quarter, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is null order by quarter"
+                with cols[2]:
+                    st.markdown("**Insurance | State**")
+                    Query = f"Select state, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is not null order by state"
+                # (Insert code to generate the first graph here)
+            elif ss.tab_locked is None and table_name == "agg_trans":
+                st.markdown("### Transaction Tab - First Graph")
+                cols = st.columns([1.5, 1.5 ,3])
+                with cols[0]:
+                    st.markdown("**Transaction | Year**")
+                with cols[1]:
+                    st.markdown("**Transaction | Quarter**")
+                with cols[2]:
+                    st.markdown("**Transaction | State**")
+                # (Insert code to generate the first graph here)
+            elif ss.tab_locked is None and table_name == "agg_user":
+                st.markdown("### User Tab - First Graph")
+                cols = st.columns([1.5, 1.5 ,3])
+                with cols[0]:
+                    st.markdown("**User | Year**")
+                with cols[1]:
+                    st.markdown("**User | Quarter**")
+                with cols[2]:
+                    st.markdown("**User | State**")
+                # (Insert code to generate the first graph here)

@@ -9,7 +9,7 @@ def Test():
             st.markdown(f"**{exp_title} Selected:** {', '.join(selected)}")
 
 
-def InsMain():
+def UserMain():
     Col1, Col2, Col3 = st.columns(3)
     with Col1:
         st.markdown("**Insurance Tab is Locked**")
