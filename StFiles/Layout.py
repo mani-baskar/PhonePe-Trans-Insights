@@ -78,7 +78,8 @@ def FilterTabs():
                     colname = "quarter" if exp_title == "Quarterly" else colname
                     filters.append(f"{colname} IN ({sql_list(selected)})")
 
-            with st.columns([5,1])[0]:
+            QueryTab = st.columns([5,1])
+            with QueryTab[0]:
                 st.markdown("**SQL Query:**")
                 if ss.tab_locked is not None and ss.tab_locked != tab_name:
                     st.write(f"Clear all filters in '{ss.tab_locked}' tab")
@@ -87,10 +88,11 @@ def FilterTabs():
                 else:
                     st.write("No filters applied.")
             # Clear button
-            with st.columns([5,1])[1]:
+            with QueryTab[1]:
                 if st.button(f"Clear {tab_name}"):
                     for exp_title in EXP_TITLES:
                         ss[f"{tab_name}_{exp_title}_selected"] = []
                     if ss.tab_locked == tab_name:
                         ss.tab_locked = None
                     st.success("Selections cleared.")
+    

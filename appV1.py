@@ -1,8 +1,9 @@
 import streamlit as st
 from StFiles.MyProfile import myProfile
 from StFiles.stDBProcess import get_lists
-from StFiles.Layout import FilterTabs
+from StFiles.Layout import EXP_TITLES, FilterTabs
 import matplotlib.pyplot as plt
+from StFiles.Insurance import Test
 
 st.set_page_config(
     page_title="PhonePe Transaction Insights",
@@ -47,7 +48,18 @@ st.title("Simple Streamlit Layout Demo")
 st.markdown(ss.summary)
 FilterTabs()
 
-# YEAR, QUARTER, STATE = st.columns(3)
+if ss.tab_locked =="Insurance":
+    st.markdown("**Insurance Tab is Locked**")
+    Test()
+
+# for exp_title in EXP_TITLES:
+#     selected_key = f"{ss.tab_locked}_{exp_title}_selected" if ss.tab_locked else f"{LockedTab}_{exp_title}_selected"
+#     selected = ss.get(selected_key, [])
+#     if selected:
+#         st.markdown(f"**{exp_title} Selected:** {', '.join(selected)}")
+
+
+# YEAR, QUARTER, STATE  = st.columns(3)
 # # For demo, suppose df1, df2, df3 and axis names already exist
 # with YEAR:
 #     if ss.tab_locked is not None and ss.tab_locked == tab_name:
