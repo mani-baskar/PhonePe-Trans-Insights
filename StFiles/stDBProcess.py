@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, text
 
 # ====================== DB CONFIG ======================
 DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME = (
-    "root", "RajaSri%4007", "192.168.1.4", "3306", "PhonePe"
+    "root", "RajaSri%4007", "192.168.1.5", "3306", "PhonePe"
 )
 
 ENGINE = create_engine(
