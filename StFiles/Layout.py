@@ -7,6 +7,7 @@ import requests
 import plotly.express as px
 from pathlib import Path
 import json
+import geopandas as gpd
 ss = st.session_state
 ss.setdefault("summary", "Use buttons below. Multi-Select keeps expanders open and lets you pick many.")
 ss.setdefault("tab_locked", None)
@@ -219,7 +220,6 @@ def FilterTabs():
                 with cols[0]:
                     state_geojson_url = "https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson"
                     state_geojson_data = requests.get(state_geojson_url).json()
-
                     on = st.toggle("Metric Count")
                     if on:
                         st.write("Feature activated!")
@@ -239,7 +239,7 @@ def FilterTabs():
                         )
                         fig.update_geos(fitbounds="locations", visible=False)
                         fig.update_layout(margin={"r":0,"t":50,"l":0,"b":0}, title_text="India States Choropleth Map")
-                        st.title("India Map Visualization")
+                        #st.title("India Map Visualization")
                         st.plotly_chart(fig, use_container_width=True)
                     else:
                         st.write("Feature deactivated!")
@@ -259,23 +259,18 @@ def FilterTabs():
                         )
                         fig.update_geos(fitbounds="locations", visible=False)
                         fig.update_layout(margin={"r":0,"t":50,"l":0,"b":0}, title_text="India States Choropleth Map")
-                        st.title("India Map Visualization")
+                        #st.title("India Map Visualization")
                         st.plotly_chart(fig, use_container_width=True)
                 with cols[1]:
                     DISTRICTS_PATH = Path("src/india-districts-2019-734.json")
                     state_geojson_data = requests.get(state_geojson_url).json()
-                    on = st.toggle("Metric Count")
-
+                    on = st.toggle("District Metric Count")
                     geojson_data, prop_keys = load_geojson_from_any(DISTRICTS_PATH)
-
-                    # --- 2) Pick the district-name property automatically ---
-                    # Common keys seen in Indian district datasets
                     CANDIDATES = [
                         "DISTRICT", "district", "District", "DT_NAME", "dtname",
                         "dt_name", "DIST_NAME", "district_n", "district_na", "NAME_2", "NAME"
                     ]
                     district_key = next((k for k in CANDIDATES if k in prop_keys), None)
-
                     if not district_key:
                         st.error(
                             "Couldn't find a district name column in the GeoJSON properties.\n\n"
@@ -283,31 +278,94 @@ def FilterTabs():
                             "Please rename/choose the district column and update the code."
                         )
                         st.stop()
-
-                    st.success(f"Using district name column: `{district_key}`")
-                    # --- 5) Draw the Plotly choropleth ---
+                    DistrictMatch = pd.read_csv("src/District Match.csv")
                     if on:
                         st.write("Feature activated!")
-                        Query = "SELECT location_name as state, SUM(metric_count) as Count FROM `map_ins_hover` WHERE state is null and location_name is not null GROUP BY location_name"
+                        Query = """
+                        SELECT 
+                        state, TRIM(REPLACE(location_name, 'district', '')) AS district,
+                        SUM(metric_count) AS Count
+                        FROM `map_ins_hover`
+                        WHERE state IS NOT NULL 
+                        AND location_name IS NOT NULL
+                        GROUP BY TRIM(REPLACE(location_name, 'district', ''))
+                        ORDER BY COUNT DESC;
+                        """
                         df = run_df(Query)
+                        df['district'] = df['district'].str.strip().str.title()
+                        DistrictMatch['MySQL_District'] = DistrictMatch['MySQL_District'].str.strip().str.title()
+                        DistrictMatch['District State'] = DistrictMatch['District State'].str.strip().str.lower()
+                        df['state'] = df['state'].str.strip().str.lower()
+                        df['district'] = df['district'].str.strip().str.title()
+                        df = df.merge(
+                            DistrictMatch,
+                            left_on=["state", "district"],
+                            right_on=["District State", "MySQL_District"],
+                            how="left"
+                        )
+                        df["district"] = df["GEOJson_District"].fillna(df["district"])
+                        df = df.drop(columns=["MySQL_District", "GEOJson_District", "District State"])
+                        df.to_excel("district_data.xlsx", index=False)
                         fig = px.choropleth(
                             data_frame=df,
                             geojson=geojson_data,
-                            featureidkey=f"properties.{district_key}",  # <-- must match the property name
-                            locations="district",                      # <-- your dataframe column with district names
-                            color="value",
+                            featureidkey=f"properties.{district_key}",
+                            locations="district",
+                            color="Count",  # <-- This column exists in your DataFrame
                             color_continuous_scale="Viridis",
                             hover_name="district",
-                            labels={"value": "Value"},
+                            labels={"Count": "Value"},  # Optionally, changes display name
                             projection="mercator",
                         )
-
                         fig.update_geos(fitbounds="locations", visible=False)
                         fig.update_layout(
                             margin=dict(r=0, t=50, l=0, b=0),
                             title_text="India Districts Choropleth Map"
                         )
-
+                        st.plotly_chart(fig, use_container_width=True)
+                    else:
+                        st.write("Feature activated!")
+                        Query = """
+                        SELECT 
+                        state, TRIM(REPLACE(location_name, 'district', '')) AS district,
+                        SUM(metric_amount) AS Amount
+                        FROM `map_ins_hover`
+                        WHERE state IS NOT NULL 
+                        AND location_name IS NOT NULL
+                        GROUP BY TRIM(REPLACE(location_name, 'district', ''))
+                        ORDER BY Amount DESC;
+                        """
+                        df = run_df(Query)
+                        df['district'] = df['district'].str.strip().str.title()
+                        DistrictMatch['MySQL_District'] = DistrictMatch['MySQL_District'].str.strip().str.title()
+                        DistrictMatch['District State'] = DistrictMatch['District State'].str.strip().str.lower()
+                        df['state'] = df['state'].str.strip().str.lower()
+                        df['district'] = df['district'].str.strip().str.title()
+                        df = df.merge(
+                            DistrictMatch,
+                            left_on=["state", "district"],
+                            right_on=["District State", "MySQL_District"],
+                            how="left"
+                        )
+                        df["district"] = df["GEOJson_District"].fillna(df["district"])
+                        df = df.drop(columns=["MySQL_District", "GEOJson_District", "District State"])
+                        df.to_excel("district_data.xlsx", index=False)
+                        fig = px.choropleth(
+                            data_frame=df,
+                            geojson=geojson_data,
+                            featureidkey=f"properties.{district_key}",
+                            locations="district",
+                            color="Amount",  # <-- This column exists in your DataFrame
+                            color_continuous_scale="Viridis",
+                            hover_name="district",
+                            labels={"Amount": "Value"},  # Optionally, changes display name
+                            projection="mercator",
+                        )
+                        fig.update_geos(fitbounds="locations", visible=False)
+                        fig.update_layout(
+                            margin=dict(r=0, t=50, l=0, b=0),
+                            title_text="India Districts Choropleth Map"
+                        )
                         st.plotly_chart(fig, use_container_width=True)
             elif ss.tab_locked is None and table_name == "agg_trans":
                 st.markdown("---")
