@@ -100,12 +100,12 @@ def FilterTabs():
             QueryTab = st.columns([5, 1])  # Now three columns
 
             with QueryTab[0]:
-                st.markdown("**SQL Query:**")
+                st.markdown("**Filter Conditions:**")
                 if ss.tab_locked is not None and ss.tab_locked != tab_name:
                     st.write(f"Clear all filters in '{ss.tab_locked}' tab")
                 elif ss.tab_locked is not None:
-                    Query = generate_sql_query(table_name, filters)
-                    st.write(Query)
+                    #Query = generate_sql_query(table_name, filters)
+                    st.write(filters)
                 else:
                     st.write("No filters applied.")
 
@@ -132,7 +132,7 @@ def FilterTabs():
 
             if st.button(f"{tab_name} Process"):
                 if tab_name == ss.tab_locked:
-                    st.write(f"Processing {tab_name} with current filters.")
+                    #st.write(f"Processing {tab_name} with current filters.")
                     Query = conditionQuery(filters)
                     if Query != "No Query" and table_name == "agg_ins":
                         InsFilterTabs(Query)

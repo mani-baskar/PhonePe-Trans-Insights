@@ -46,6 +46,7 @@ with st.sidebar:
     myProfile()
     st.markdown("---")
 ss = st.session_state
-st.title("Simple Streamlit Layout Demo")
+st.title("PhonePe Transaction Insights Dashboard")
+ss.summary = "Explore Insurance, Transactions, and User trends across India with interactive charts, filters, and maps."
 st.markdown(ss.summary)
 FilterTabs()
