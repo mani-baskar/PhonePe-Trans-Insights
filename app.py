@@ -3,9 +3,9 @@ from StFiles.MyProfile import myProfile
 from StFiles.stDBProcess import get_lists
 from StFiles.Layout import EXP_TITLES, FilterTabs
 import matplotlib.pyplot as plt
-from StFiles.Insurance import InsMain
-#from StFiles.Transaction import Test2 # type: ignore
-#from StFiles.User import Test1 # type: ignore
+from StFiles.Insurance import InsNonFilterTabs
+from StFiles.Transaction import TransNonFilterTabs # type: ignore
+from StFiles.User import UserNonFilterTabs # type: ignore
 
 st.set_page_config(
     page_title="PhonePe Transaction Insights",
@@ -49,40 +49,3 @@ ss = st.session_state
 st.title("Simple Streamlit Layout Demo")
 st.markdown(ss.summary)
 FilterTabs()
-
-if ss.tab_locked =="Insurance":
-    InsMain()
-if ss.tab_locked =="Transaction":
-    st.markdown("**Transaction Tab is Locked**")
-    #Test2()
-if ss.tab_locked =="User":
-    st.markdown("**User Tab is Locked**")
-    #Test1()
-
-
-# for exp_title in EXP_TITLES:
-#     selected_key = f"{ss.tab_locked}_{exp_title}_selected" if ss.tab_locked else f"{LockedTab}_{exp_title}_selected"
-#     selected = ss.get(selected_key, [])
-#     if selected:
-#         st.markdown(f"**{exp_title} Selected:** {', '.join(selected)}")
-
-
-# YEAR, QUARTER, STATE  = st.columns(3)
-# # For demo, suppose df1, df2, df3 and axis names already exist
-# with YEAR:
-#     if ss.tab_locked is not None and ss.tab_locked == tab_name:
-#         selected = ss.get(f"{tab_name}_Year_selected", [])
-#         if selected:
-#             colname = "year"
-#         st.write("Select * from Ins_Agg")
-
-#     plot_bar_line(df1, 'x', 'bar_y', 'line_y', "Plot 1")
-#     st.markdown(basic_summary(df1, 'x', 'bar_y', 'line_y'))
-
-# with QUARTER:
-#     plot_bar_line(df2, 'x', 'bar_y', 'line_y', "Plot 2")
-#     st.markdown(basic_summary(df2, 'x', 'bar_y', 'line_y'))
-
-# with STATE:
-#     plot_bar_line(df3, 'x', 'bar_y', 'line_y', "Plot 3")
-#     st.markdown(basic_summary(df3, 'x', 'bar_y', 'line_y'))
