@@ -67,3 +67,7 @@ def fetch_grouped(
         rows = conn.execute(sql).fetchall()
 
     return pd.DataFrame(rows, columns=["x"] + list(metrics.keys()))
+
+def run_df(sql: str, **params) -> pd.DataFrame:
+    with ENGINE.connect() as conn: 
+        return pd.read_sql_query(text(sql), conn, params=params)

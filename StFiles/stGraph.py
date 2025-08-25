@@ -2,7 +2,123 @@
 import numpy as np
 import pandas as pd
 import altair as alt
+import requests
 import streamlit as st
+import plotly.express as px
+from pathlib import Path
+import json
+import geopandas as gpd
+
+def get_geojson(url_or_path):
+    if url_or_path.startswith('http'):
+        return requests.get(url_or_path).json()
+    else:
+        import json
+        with open(url_or_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
+def plot_choropleth(df, geojson_data, location_col, color_col, featureidkey, title, label_name):
+    fig = px.choropleth(
+        data_frame=df,
+        geojson=geojson_data,
+        featureidkey=featureidkey,
+        locations=location_col,
+        color=color_col,
+        color_continuous_scale="Viridis",
+        hover_name=location_col,
+        labels={color_col: label_name},
+        projection="mercator",
+    )
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(
+        margin=dict(r=0, t=50, l=0, b=0),
+        title_text=title
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+def clean_strings(df, cols):
+    for col, case in cols:
+        # Remove leading/trailing spaces
+        df[col] = df[col].str.strip()
+
+        # Replace "-" with space
+        df[col] = df[col].str.replace("-", " ", regex=False)
+
+        # Apply case formatting
+        if case == 'title':
+            df[col] = df[col].str.title()
+        elif case == 'lower':
+            df[col] = df[col].str.lower()
+        elif case == 'upper':
+            df[col] = df[col].str.upper()
+    return df
+
+def load_geojson_from_any(path: Path):
+    """
+    Reads GeoJSON directly, or uses GeoPandas to read TopoJSON/GeoJSON,
+    and returns (geojson_dict, features_properties_keys).
+    """
+    # Try plain JSON first
+    with open(path, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+
+    if isinstance(raw, dict) and raw.get("type") == "FeatureCollection":
+        # Already GeoJSON
+        gj = raw
+    elif isinstance(raw, dict) and raw.get("type") == "Topology":
+        # TopoJSON → use GeoPandas/Fiona (GDAL) to read it, then export to GeoJSON
+        try:
+            gdf = gpd.read_file(path.as_posix())
+            # Ensure we have WGS84 for Plotly
+            if gdf.crs is not None:
+                gdf = gdf.to_crs(epsg=4326)
+            gj = json.loads(gdf.to_json())
+        except Exception as e:
+            st.error(
+                "Your file looks like TopoJSON and needs GeoPandas/GDAL to read.\n\n"
+                "Please install: `pip install geopandas shapely fiona`\n\n"
+                f"Loader error: {e}"
+            )
+            st.stop()
+    else:
+        st.error("Unsupported file format. Expecting GeoJSON FeatureCollection or TopoJSON.")
+        st.stop()
+
+    # Collect property keys from first feature
+    props_keys = set()
+    for feat in gj.get("features", [])[:50]:  # sample a few
+        props_keys.update(feat.get("properties", {}).keys())
+    return gj, props_keys
+
+def get_district_key(prop_keys):
+    CANDIDATES = [
+        "DISTRICT", "district", "District", "DT_NAME", "dtname",
+        "dt_name", "DIST_NAME", "district_n", "district_na", "NAME_2", "NAME"
+    ]
+    return next((k for k in CANDIDATES if k in prop_keys), None)
+
+
+STATE_OVERRIDES = {
+    # Use Title Case keys after normalization
+    "Nct Of Delhi": "Delhi",
+    "Andaman And Nicobar Island": "Andaman And Nicobar Islands",
+    "Andaman And Nicobar Islands": "Andaman And Nicobar Islands",
+    "Pondicherry": "Puducherry",
+    "Dadra And Nagar Haveli": "Dadra And Nagar Haveli And Daman And Diu",
+    "Daman And Diu": "Dadra And Nagar Haveli And Daman And Diu",
+    # Add any DB/GeoJSON quirks you see here
+}
+
+def normalize_state_name(s: pd.Series) -> pd.Series:
+    out = (
+        s.astype(str)
+         .str.strip()
+         .str.replace(r"[-_]", " ", regex=True)          # hyphen/underscore -> space
+         .str.replace("&", "and", regex=False)           # & -> and
+         .str.replace(r"\s+", " ", regex=True)           # collapse spaces
+         .str.title()
+    )
+    return out.replace(STATE_OVERRIDES)
 
 # ====================== x-axis ordering ======================
 def _x_order(df: pd.DataFrame) -> list | str:

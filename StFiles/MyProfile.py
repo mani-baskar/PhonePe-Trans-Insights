@@ -41,7 +41,7 @@ def myProfile():
     <a href="mailto:mani111355@gmail.com"
         style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;">
         <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" width="20">
-        <span style="font-size:18px;color:#d44638;font-weight:600;">mani111355@gmail.com</span>
+        <span style="font-size:18px;color:#d44638;font-weight:600;">mani111355</span>
     </a>
     </p>
 

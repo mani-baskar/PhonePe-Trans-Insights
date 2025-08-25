@@ -1,88 +1,45 @@
 import streamlit as st
-# from stDBProcess import get_lists, ENGINE, run_df
-# from stGraph import wide_bar, bar_line_combo, grouped_bar_line_share_combo, bar_line_dynamic_scale, get_geojson, plot_choropleth, clean_strings, load_geojson_from_any, get_district_key
-# from Layout import EXP_TITLES, FilterTabs
 from StFiles.stDBProcess import get_lists, ENGINE, run_df
-from StFiles.stGraph import wide_bar, bar_line_combo, grouped_bar_line_share_combo, bar_line_dynamic_scale, get_geojson, plot_choropleth, clean_strings, load_geojson_from_any, get_district_key
-#from StFiles.Layout import EXP_TITLES, FilterTabs
+from StFiles.stGraph import wide_bar, bar_line_combo, grouped_bar_line_share_combo, bar_line_dynamic_scale, get_geojson, plot_choropleth, clean_strings, load_geojson_from_any, get_district_key, normalize_state_name
 from pathlib import Path
-import json
-import geopandas as gpd
 import pandas as pd
 ss = st.session_state
+EXP_TITLES = ["Year", "Quarterly", "State"]
+
 st.set_page_config(
     page_title="PhonePe Transaction Insights",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
-def Test():
-    for exp_title in EXP_TITLES:
-        selected_key = f"Insurance_{exp_title}_selected" if ss.tab_locked else f"Insurance_{exp_title}_selected"
-        selected = ss.get(selected_key, [])
-        if selected:
-            st.markdown(f"**{exp_title} Selected:** {', '.join(selected)}")
 
-def TransMain():
-    Col1, Col2, Col3 = st.columns(3)
-    with Col1:
-        st.markdown("**Insurance Tab is Locked**")
-    with Col2:
-        st.markdown("**User Tab is Locked**")
-    with Col3:
-        st.markdown("**Transaction Tab is Locked**")
-
-def TransNonFilterTabs(table_name):
+def InsNonFilterTabs(table_name):
     st.markdown("---")
-    st.markdown("### PhonePe Transaction - Insights")
-    cols = st.columns([1.5, 1.5, 1, 2])
+    st.markdown("### PhonePe Insurance - Insights")
+    cols = st.columns([1.5, 1.5 ,3])
     with cols[0]:
-        Query = f"Select year, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is null GROUP BY year order by year"
+        Query = f"Select year, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is null  GROUP BY year order by year"
         df_year = run_df(Query)
         df_year = df_year.rename(columns={"year": "x"})
-        bar_line_combo(df_year, bar_col="payment_amount", line_col="payment_count", title="Transaction Details by Year", x_title="Year", y1_title="Payment Amount", y2_title="Payment Count", bar_scale="T", line_scale="B")
+        bar_line_combo(df_year, bar_col="payment_amount", line_col="payment_count", title="Insurance Details by Year", x_title="Year", y1_title="Payment Amount", y2_title="Payment Count")
         
     with cols[1]:
-        Query = f"Select quarter, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is null GROUP BY quarter order by quarter"
+        Query = f"Select quarter, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is null  GROUP BY quarter order by quarter"
         df_quarter = run_df(Query)
         df_quarter = df_quarter.rename(columns={"quarter": "x"})
-        bar_line_combo(df_quarter, bar_col="payment_amount", line_col="payment_count", title="Transaction Details by Quarter", x_title="Quarter", y1_title="Payment Amount", y2_title="Payment Count", bar_scale="T", line_scale="B")
+        bar_line_combo(df_quarter, bar_col="payment_amount", line_col="payment_count", title="Insurance Details by Quarter", x_title="Quarter", y1_title="Payment Amount", y2_title="Payment Count")
         
     with cols[2]:
-        Query = f"""
-            SELECT transaction_name,
-                SUM(payment_count) AS payment_count,
-                SUM(payment_amount) AS payment_amount
-            FROM {table_name}
-            WHERE state IS NULL
-            GROUP BY transaction_name
-            ORDER BY SUM(payment_amount) DESC
-        """
-        df_transaction = run_df(Query).rename(columns={"transaction_name": "x"})
-        order = df_transaction["x"].tolist()
-        df_transaction["x"] = pd.Categorical(df_transaction["x"], categories=order, ordered=True)
-        bar_line_combo(
-            df_transaction,
-            bar_col="payment_amount",
-            line_col="payment_count",
-            title="Transaction Details by Transaction Name",
-            x_title="Transaction Name",
-            y1_title="Payment Amount",
-            y2_title="Payment Count",
-            x_order=order,           # <-- pass it in
-            bar_scale="T", line_scale="B"
-        )
-    with cols[3]:
-        Query = f"Select state, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is not null GROUP BY state order by (payment_count + payment_amount) DESC LIMIT 10"
+        Query = f"Select state, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from {table_name} where state is not null GROUP BY state order by (payment_count + payment_amount) DESC LIMIT 18"
         df_state = run_df(Query)
         df_state = df_state.sort_values(by=["payment_amount"], ascending=False)
         df_state = df_state.rename(columns={"state": "x"})
-        bar_line_combo(df_state, bar_col="payment_amount", line_col="payment_count", title="Top 10 Transaction Details by State", x_title="State", y1_title="Payment Amount", y2_title="Payment Count", bar_scale="T", line_scale="B")
+        bar_line_combo(df_state, bar_col="payment_amount", line_col="payment_count", title="Top 18 Insurance Details by State", x_title="State", y1_title="Payment Amount", y2_title="Payment Count")
     st.markdown("---")
 #-----------------------------------------------------------------------------------------------------------------------                
     st.markdown("### Top 10 Participants Insights")
     cols = st.columns([2, 2 ,2])
     with cols[0]:
-        Query = f"SELECT DISTINCT state_entity, count(*) as Count, SUM(state_metric_count) as Total_Count, SUM(state_metric_amount) as Total_Amount from top_trans WHERE state_entity IS NOT null and state is null GROUP BY state_entity ORDER BY count(*) DESC, (SUM(state_metric_count) + SUM(state_metric_amount)) DESC;"
+        Query = f"SELECT DISTINCT state_entity, count(*) as Count, SUM(state_metric_count) as Total_Count, SUM(state_metric_amount) as Total_Amount from top_ins WHERE state_entity IS NOT null and state is null GROUP BY state_entity ORDER BY count(*) DESC, (SUM(state_metric_count) + SUM(state_metric_amount)) DESC;"
         df_year = run_df(Query)
         grouped_bar_line_share_combo(
             df=df_year,
@@ -96,7 +53,7 @@ def TransNonFilterTabs(table_name):
         )
 
     with cols[1]:
-        Query = f"SELECT DISTINCT district_entity, count(*) as Count, SUM(district_metric_count) as Total_Count, SUM(district_metric_amount) as Total_Amount from top_trans WHERE state_entity IS NOT null and state is null GROUP BY district_entity ORDER BY count(*) DESC, (SUM(district_metric_count) + SUM(district_metric_amount)) DESC;"
+        Query = f"SELECT DISTINCT district_entity, count(*) as Count, SUM(district_metric_count) as Total_Count, SUM(district_metric_amount) as Total_Amount from top_ins WHERE state_entity IS NOT null and state is null GROUP BY district_entity ORDER BY count(*) DESC, (SUM(district_metric_count) + SUM(district_metric_amount)) DESC;"
         df_year = run_df(Query)
         grouped_bar_line_share_combo(
             df=df_year,
@@ -110,7 +67,7 @@ def TransNonFilterTabs(table_name):
         )
 
     with cols[2]:
-        Query = f"SELECT DISTINCT pincode_entity, count(*) as Count, SUM(pincode_metric_count) as Total_Count, SUM(pincode_metric_amount) as Total_Amount from top_trans WHERE state_entity IS NOT null and state is null GROUP BY pincode_entity ORDER BY count(*) DESC, (SUM(pincode_metric_count) + SUM(pincode_metric_amount)) DESC;"
+        Query = f"SELECT DISTINCT pincode_entity, count(*) as Count, SUM(pincode_metric_count) as Total_Count, SUM(pincode_metric_amount) as Total_Amount from top_ins WHERE state_entity IS NOT null and state is null GROUP BY pincode_entity ORDER BY count(*) DESC, (SUM(pincode_metric_count) + SUM(pincode_metric_amount)) DESC;"
         df_year = run_df(Query)
         grouped_bar_line_share_combo(
             df=df_year,
@@ -131,13 +88,13 @@ def TransNonFilterTabs(table_name):
         # States map
         state_geojson_url = "https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson"
         state_geojson = get_geojson(state_geojson_url)
-        metric_count_on = st.toggle("Transaction Metric Count")
+        metric_count_on = st.toggle("Insurance Metric Count")
         if metric_count_on:
-            query = "SELECT location_name AS state, SUM(metric_count) AS metric FROM `map_trans` WHERE state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
+            query = "SELECT location_name AS state, SUM(metric_count) AS metric FROM `map_ins_hover` WHERE state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
             label_name = "Count"
             color_col = "metric"
         else:
-            query = "SELECT location_name AS state, SUM(metric_amount) AS metric FROM `map_trans` WHERE state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
+            query = "SELECT location_name AS state, SUM(metric_amount) AS metric FROM `map_ins_hover` WHERE state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
             label_name = "Amount"
             color_col = "metric"
 
@@ -163,7 +120,7 @@ def TransNonFilterTabs(table_name):
             st.error(f"Couldn't find a district name column in the GeoJSON properties. Available keys: {sorted(list(prop_keys))[:20]}")
             st.stop()
         DistrictMatch = pd.read_csv("Y:\Manikandan\Guvi Class\Projects\PhonePe-Trans-Insights\src\District Match.csv")
-        district_metric_count_on = st.toggle("Transaction District Metric Count")
+        district_metric_count_on = st.toggle("Insurance District Metric Count")
         if district_metric_count_on:
             sql_metric_col = "SUM(metric_count) AS metric"
             label_name = "Count"
@@ -173,7 +130,7 @@ def TransNonFilterTabs(table_name):
 
         query = f"""
             SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, {sql_metric_col}
-            FROM `map_trans`
+            FROM `map_ins_hover`
             WHERE state IS NOT NULL AND location_name IS NOT NULL
             GROUP BY state, TRIM(REPLACE(location_name, 'district', ''))
             ORDER BY metric DESC;
@@ -203,7 +160,7 @@ def TransNonFilterTabs(table_name):
             label_name=label_name
         )
 
-def FilterPhonePeTransaction(Query):
+def FilterPhonePeInsurance(Query):
     if Query and "State IN" in Query:
         StateIsNull = Query
         StateNotNull = Query
@@ -215,19 +172,19 @@ def FilterPhonePeTransaction(Query):
     st.markdown("### PhonePe Insurance - Insights")
     cols = st.columns([1.5, 1.5 ,3])
     with cols[0]:
-        Query = f"Select year, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from agg_trans {StateIsNull} GROUP BY year order by year"
+        Query = f"Select year, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from agg_ins {StateIsNull} GROUP BY year order by year"
         df_year = run_df(Query)
         df_year = df_year.rename(columns={"year": "x"})
         bar_line_combo(df_year, bar_col="payment_amount", line_col="payment_count", title="Insurance Details by Year", x_title="Year", y1_title="Payment Amount", y2_title="Payment Count")
         st.write(Query)
     with cols[1]:
-        Query = f"Select quarter, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from agg_trans {StateIsNull} GROUP BY quarter order by quarter"
+        Query = f"Select quarter, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from agg_ins {StateIsNull} GROUP BY quarter order by quarter"
         df_quarter = run_df(Query)
         df_quarter = df_quarter.rename(columns={"quarter": "x"})
         bar_line_combo(df_quarter, bar_col="payment_amount", line_col="payment_count", title="Insurance Details by Quarter", x_title="Quarter", y1_title="Payment Amount", y2_title="Payment Count")
         st.write(Query)
     with cols[2]:
-        Query = f"Select state, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from agg_trans {StateNotNull} GROUP BY state order by (payment_count + payment_amount) DESC LIMIT 18"
+        Query = f"Select state, Sum(payment_count) as payment_count, Sum(payment_amount) as payment_amount from agg_ins {StateNotNull} GROUP BY state order by (payment_count + payment_amount) DESC LIMIT 18"
         df_state = run_df(Query)
         df_state = df_state.sort_values(by=["payment_amount"], ascending=False)
         df_state = df_state.rename(columns={"state": "x"})
@@ -245,7 +202,7 @@ def FilterTop10Insight(Query):
             Count(*)                 AS Count,
             Sum(state_metric_count)  AS Total_Count,
             Sum(state_metric_amount) AS Total_Amount
-        FROM   top_trans
+        FROM   top_ins
         {RQuery}       
         GROUP  BY state_entity
         ORDER  BY Count(*) DESC,
@@ -258,7 +215,7 @@ def FilterTop10Insight(Query):
             COUNT(*) AS Count,
             Sum(district_metric_count)  AS Total_Count,
             Sum(district_metric_amount) AS Total_Amount
-        FROM   top_trans
+        FROM   top_ins
         {Query}
         GROUP BY state,district_entity
         ORDER BY Count(*) DESC,
@@ -271,7 +228,7 @@ def FilterTop10Insight(Query):
             COUNT(*) AS Count,
             Sum(district_metric_count)  AS Total_Count,
             Sum(district_metric_amount) AS Total_Amount
-        FROM   top_trans
+        FROM   top_ins
         {Query}
         GROUP BY state,pincode_entity
         ORDER BY Count(*) DESC,
@@ -279,9 +236,9 @@ def FilterTop10Insight(Query):
                 + Sum(district_metric_amount) ) DESC;
         """
     else:
-        StateQuery = f"SELECT DISTINCT state_entity, count(*) as Count, SUM(state_metric_count) as Total_Count, SUM(state_metric_amount) as Total_Amount from top_trans {Query} AND state_entity IS NOT null and state is null GROUP BY state_entity ORDER BY count(*) DESC, (SUM(state_metric_count) + SUM(state_metric_amount)) DESC;"
-        QuarterQuery = f"SELECT DISTINCT district_entity, count(*) as Count, SUM(district_metric_count) as Total_Count, SUM(district_metric_amount) as Total_Amount from top_trans {Query} AND state_entity IS NOT null and state is null GROUP BY district_entity ORDER BY count(*) DESC, (SUM(district_metric_count) + SUM(district_metric_amount)) DESC;"
-        PincodeQuery = f"SELECT DISTINCT pincode_entity, count(*) as Count, SUM(pincode_metric_count) as Total_Count, SUM(pincode_metric_amount) as Total_Amount from top_trans {Query} AND state_entity IS NOT null and state is null GROUP BY pincode_entity ORDER BY count(*) DESC, (SUM(pincode_metric_count) + SUM(pincode_metric_amount)) DESC;"
+        StateQuery = f"SELECT DISTINCT state_entity, count(*) as Count, SUM(state_metric_count) as Total_Count, SUM(state_metric_amount) as Total_Amount from top_ins {Query} AND state_entity IS NOT null and state is null GROUP BY state_entity ORDER BY count(*) DESC, (SUM(state_metric_count) + SUM(state_metric_amount)) DESC;"
+        QuarterQuery = f"SELECT DISTINCT district_entity, count(*) as Count, SUM(district_metric_count) as Total_Count, SUM(district_metric_amount) as Total_Amount from top_ins {Query} AND state_entity IS NOT null and state is null GROUP BY district_entity ORDER BY count(*) DESC, (SUM(district_metric_count) + SUM(district_metric_amount)) DESC;"
+        PincodeQuery = f"SELECT DISTINCT pincode_entity, count(*) as Count, SUM(pincode_metric_count) as Total_Count, SUM(pincode_metric_amount) as Total_Amount from top_ins {Query} AND state_entity IS NOT null and state is null GROUP BY pincode_entity ORDER BY count(*) DESC, (SUM(pincode_metric_count) + SUM(pincode_metric_amount)) DESC;"
 
     st.markdown("### Top 10 Participants Insights")
     cols = st.columns([2, 2 ,2])
@@ -328,30 +285,34 @@ def FilterTop10Insight(Query):
 
 def FilterMapInsightsAmount(Query):
     if Query and "state IN" in Query:
-        StateAmountQuery = f"SELECT state, SUM(metric_amount) AS metric FROM `map_trans` {Query} GROUP BY state"
-        DistrictAmountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_amount) AS metric FROM `map_trans` {Query} GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
+        StateAmountQuery = f"SELECT state, SUM(metric_amount) AS metric FROM `map_ins_hover` {Query} GROUP BY state"
+        DistrictAmountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_amount) AS metric FROM `map_ins_hover` {Query} GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
     else:
-        StateAmountQuery = f"SELECT location_name AS state, SUM(metric_amount) AS metric FROM `map_trans` {Query} AND state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
-        DistrictAmountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_amount) AS metric FROM `map_trans` {Query} AND state IS NOT NULL AND location_name IS NOT NULL GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
+        StateAmountQuery = f"SELECT location_name AS state, SUM(metric_amount) AS metric FROM `map_ins_hover` {Query} AND state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
+        DistrictAmountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_amount) AS metric FROM `map_ins_hover` {Query} AND state IS NOT NULL AND location_name IS NOT NULL GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
     st.markdown("### Map Insights")
     cols = st.columns([3, 3])
 
     with cols[0]:
+        # States map
         state_geojson_url = "https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson"
         state_geojson = get_geojson(state_geojson_url)
         query = StateAmountQuery
         label_name = "Amount"
         color_col = "metric"
+
         df = run_df(query)
         df = clean_strings(df, [('state', 'title')])
         StateMatch = pd.read_csv("Y:\Manikandan\Guvi Class\Projects\PhonePe-Trans-Insights\src\State Match.csv")
         StateMatch = clean_strings(StateMatch, [('MYSQLState', 'title')])
+        # Merge with mapping file
         df = df.merge(
             StateMatch,
             left_on=["state"],
             right_on=["MYSQLState"],
             how="left"
         )
+        # Use mapped name if present
         df["state"] = df["JSON State"].fillna(df["state"])
         df = df.drop(columns=["MYSQLState", "JSON State"])
         plot_choropleth(
@@ -400,12 +361,12 @@ def FilterMapInsightsAmount(Query):
 def FilterMapInsightsCount(Query):
     if Query and "state IN" in Query:
         st.write(Query)
-        StateCountQuery = f"SELECT state, SUM(metric_count) AS metric FROM `map_trans` {Query} GROUP BY state"
-        DistrictCountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_count) AS metric FROM `map_trans` {Query} GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
+        StateCountQuery = f"SELECT state, SUM(metric_count) AS metric FROM `map_ins_hover` {Query} GROUP BY state"
+        DistrictCountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_count) AS metric FROM `map_ins_hover` {Query} GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
     else:
         st.write(Query)
-        StateCountQuery = f"SELECT location_name AS state, SUM(metric_count) AS metric FROM `map_trans` {Query} AND state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
-        DistrictCountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_count) AS metric FROM `map_trans` {Query} AND state IS NOT NULL AND location_name IS NOT NULL GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
+        StateCountQuery = f"SELECT location_name AS state, SUM(metric_count) AS metric FROM `map_ins_hover` {Query} AND state IS NULL AND location_name IS NOT NULL GROUP BY location_name"
+        DistrictCountQuery = f"SELECT state, TRIM(REPLACE(location_name, 'district', '')) AS district, SUM(metric_count) AS metric FROM `map_ins_hover` {Query} AND state IS NOT NULL AND location_name IS NOT NULL GROUP BY state, TRIM(REPLACE(location_name, 'district', '')) ORDER BY metric DESC;"
     st.markdown("### Map Insights")
     cols = st.columns([3, 3])
 
@@ -469,7 +430,8 @@ def FilterMapInsightsCount(Query):
             label_name=label_name
         )
 
-def TransFilterTabs(Query):
-    FilterPhonePeTransaction(Query)
+def InsFilterTabs(Query):
+    FilterPhonePeInsurance(Query)
     FilterTop10Insight(Query)
     FilterMapInsightsAmount(Query)
+    
