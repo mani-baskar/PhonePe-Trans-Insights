@@ -32,8 +32,7 @@ This dashboard delivers:
 ## Installation
 
 <details>
-  <summary><strong>Installation steps (expand)</strong></summary>
-
+  <summary><strong><mark>⚙️ Installation steps</mark></strong> — click to expand</summary>
 - [1) Prerequisites](#1-prerequisites)
 - [2) Project layout](#2-project-layout)
 - [3) Create and activate a virtual environment](#3-create-and-activate-a-virtual-environment)
