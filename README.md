@@ -3,7 +3,7 @@
 An interactive **Streamlit** dashboard for exploring India’s PhonePe transaction data across insurance, general transactions and user metrics. The app connects to a MySQL database, fetches aggregated metrics and visualizes them through dynamic bar/line charts and choropleth maps. Filters for year, quarter and state allow you to drill into specific regions or periods, and the top‑10 views highlight leading states, districts and pincodes.
 
 <details>
-  <summary><strong>Table of Contents (click to expand)</strong></summary>
+  <summary><strong> <mark> Table of Contents (click to expand) </mark> </strong></summary>
 
 - [Why this project?](#why-this-project)
 - [Installation](#installation)
@@ -32,7 +32,7 @@ This dashboard delivers:
 ## Installation
 
 <details>
-  <summary><strong><mark>⚙️ Installation steps</mark></strong> — click to expand</summary>
+  <summary><strong><mark> Installation steps</mark></strong> — click to expand</summary>
 
 - [1) Prerequisites](#1-prerequisites)
 - [2) Project layout](#2-project-layout)
@@ -207,7 +207,7 @@ You’re all set! Launch the app, select a tab (Insurance/Transactions/Users), a
 ```
 
 
-## Recommended configurations
+## Flow Chart
 ...
 
 ## Custom configurations
