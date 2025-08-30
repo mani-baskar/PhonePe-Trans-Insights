@@ -204,10 +204,14 @@ Streamlit will print a local URL (e.g., `http://localhost:8501`). Open it in you
 
 You’re all set! Launch the app, select a tab (Insurance/Transactions/Users), and explore India’s digital payments story interactively.
 
-```
-
 
 ## Flow Chart
+
+<p align="center">
+  <img src="src/Flow%20chart.png" alt="Flow chart" width="720">
+  <br><em>Figure: End-to-end app flow</em>
+</p>
+
 ...
 
 ## Custom configurations
