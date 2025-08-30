@@ -212,6 +212,11 @@ You’re all set! Launch the app, select a tab (Insurance/Transactions/Users), a
   <br><em>Figure: End-to-end app flow</em>
 </p>
 
+<p align="center">
+  <img src="src/Flow%20chart%202.png" alt="Flow chart">
+  <br><em>Figure: End-to-end app flow</em>
+</p>
+
 ...
 
 ## Custom configurations
