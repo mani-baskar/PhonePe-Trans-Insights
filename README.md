@@ -33,6 +33,7 @@ This dashboard delivers:
 
 <details>
   <summary><strong><mark>⚙️ Installation steps</mark></strong> — click to expand</summary>
+
 - [1) Prerequisites](#1-prerequisites)
 - [2) Project layout](#2-project-layout)
 - [3) Create and activate a virtual environment](#3-create-and-activate-a-virtual-environment)
@@ -43,6 +44,7 @@ This dashboard delivers:
 - [8) Troubleshooting (quick)](#8-troubleshooting-quick)
 
 </details>
+
 
 
 Follow these steps to run the **PhonePe Transaction Insights Dashboard** locally.
