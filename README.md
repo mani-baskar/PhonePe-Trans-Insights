@@ -31,6 +31,21 @@ This dashboard delivers:
 
 ## Installation
 
+<details>
+  <summary><strong>Installation steps (expand)</strong></summary>
+
+- [1) Prerequisites](#1-prerequisites)
+- [2) Project layout](#2-project-layout)
+- [3) Create and activate a virtual environment](#3-create-and-activate-a-virtual-environment)
+- [4) Install dependencies](#4-install-dependencies)
+- [5) Configure database connection](#5-configure-database-connection)
+- [6) Fix local file paths (one-time)](#6-fix-local-file-paths-one-time)
+- [7) Run the app](#7-run-the-app)
+- [8) Troubleshooting (quick)](#8-troubleshooting-quick)
+
+</details>
+
+
 Follow these steps to run the **PhonePe Transaction Insights Dashboard** locally.
 
 ### 1) Prerequisites
