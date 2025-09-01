@@ -107,69 +107,45 @@ Geospatial visuals are powered by **Plotly choropleths**, with optional **GeoPan
 
 ## 4. Installation
 
-<details>
-  <summary><strong>🚀 Installation steps (click to expand)</strong></summary>
-
-- [1) Prerequisites](#41-prerequisites)  
-- [2) Project layout](#42-project-layout)  
-- [3) Create and activate a virtual environment](#43-create-and-activate-a-virtual-environment)  
-- [4) Install dependencies](#44-install-dependencies)  
-- [5) Configure database connection](#45-configure-database-connection)  
-- [6) Fix local file paths (one-time)](#46-fix-local-file-paths-one-time)  
-- [7) Run the app](#47-run-the-app)  
-- [8) Troubleshooting (quick)](#48-troubleshooting-quick)
-
-</details>
-
 Follow these steps to run the **PhonePe Transaction Insights Dashboard** locally.
 
 ### 4.1) Prerequisites
 - **Python** 3.10 or newer  
-- **MySQL** 8.x (or compatible) server with network access  
+- **MySQL** 8.x (or compatible) with network access  
 - **Git** (optional, for cloning)  
-- *(Optional, for TopoJSON/GeoJSON handling)* **GDAL stack** via `geopandas`, `fiona`, `shapely`
+- *(Optional, for Geo/TopoJSON)* **GDAL stack** via `geopandas`, `fiona`, `shapely`
 
-> Windows tip for Geo stack: prefer `pip install geopandas` first (prebuilt wheels). If it fails, install via Conda:  
+> **Windows tip (Geo stack):** try `pip install geopandas` first (prebuilt wheels). If it fails, use Conda:  
 > `conda install -c conda-forge geopandas fiona shapely gdal`
 
 ---
 
-### 4.2) Project layout
+### 4.2) Get the source code
 
-Create this structure (move your files accordingly):
-
-```
-
-PhonePe-Trans-Insights/
-├─ app.py
-├─ StFiles/
-│  ├─ **init**.py
-│  ├─ Layout.py
-│  ├─ Insurance.py
-│  ├─ Transaction.py
-│  ├─ User.py
-│  ├─ stDBProcess.py
-│  ├─ stGraph.py
-│  └─ MyProfile.py
-├─ src/
-│  ├─ State Match.csv
-│  ├─ District Match.csv
-│  └─ india-districts-2019-734.json   # download/place this file here
-└─ assets/            # (optional: logos, images, avatar, etc.)
-
+**Option A — Clone the repository (recommended)**
+```bash
+git clone https://github.com/mani-baskar/PhonePe-Trans-Insights.git
+cd PhonePe-Trans-Insights
 ````
 
-Create an empty `__init__.py` so `StFiles` is treated as a Python package.
+> To update later: `git pull origin main`
+
+**Option B — Download as ZIP**
+
+1. Open: [mani-baskar/PhonePe-Trans-Insights](https://github.com/mani-baskar/PhonePe-Trans-Insights)
+2. Click **Code** → **Download ZIP**
+3. Extract and open the folder in your workspace (e.g., VS Code).
 
 ---
 
 ### 4.3) Create and activate a virtual environment
 
 **Windows (PowerShell)**
+
 ```bash
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-````
+```
 
 **macOS / Linux**
 
@@ -184,14 +160,54 @@ source .venv/bin/activate
 
 ```bash
 pip install --upgrade pip
-pip install streamlit pandas numpy sqlalchemy pymysql altair plotly requests matplotlib
-# Optional (recommended for district maps & TopoJSON/GeoJSON convenience)
+pip install streamlit pandas numpy sqlalchemy pymysql altair plotly requests matplotlib ipykernel
+# Optional (recommended for district maps & TopoJSON/GeoJSON handling)
 pip install geopandas shapely fiona
 ```
 
 ---
 
-### 4.5) Configure database connection
+### 4.5) Project layout
+
+Ensure your folder structure matches (move files if needed).
+For the latest structure, see the repo: [mani-baskar/PhonePe-Trans-Insights.git](https://github.com/mani-baskar/PhonePe-Trans-Insights.git)
+
+```
+PhonePe-Trans-Insights/
+├─ app.py
+├─ StFiles/
+│  ├─ __init__.py
+│  ├─ Layout.py
+│  ├─ Insurance.py
+│  ├─ Transaction.py
+│  ├─ User.py
+│  ├─ stDBProcess.py
+│  ├─ stGraph.py
+│  └─ MyProfile.py
+├─ src/
+│  ├─ State Match.csv
+│  ├─ District Match.csv
+│  └─ india-districts-2019-734.json   # download/place this file here
+└─ assets/            # (optional: logos, images, avatar, etc.)
+```
+
+> Create an empty `StFiles/__init__.py` so `StFiles` is treated as a package.
+
+---
+
+### 4.6) Insert PhonePe data into MySQL
+
+* **Schema:** Import tables from `DBTable.sql` (in the repo) into your MySQL database.
+  This will create the required tables with correct names.
+* **Load data:** Use `phonepe_data_loader.ipynb` (in the repo) to download the official PhonePe data into your local folder and bulk-load it into the newly created tables.
+* After the data load completes successfully, proceed to the next steps.
+
+> Ensure the following tables exist and are populated (as referenced by the app):
+> `agg_ins`, `agg_trans`, `agg_user`, `map_ins_hover`, `map_trans`, `map_user`, `top_ins`, `top_trans`, `top_user`.
+
+---
+
+### 4.7) Configure database connection
 
 Open `StFiles/stDBProcess.py` and set your MySQL credentials/host/database:
 
@@ -201,7 +217,9 @@ DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME = (
 )
 ```
 
-> Security best-practice: don’t commit real credentials. You can refactor to read from environment variables:
+These tables must include the columns used in queries (e.g., `year`, `quarter`, `state`, `payment_count`, `payment_amount`, etc.).
+
+> **Best practice:** don’t commit credentials. You can read from environment variables:
 >
 > ```python
 > import os
@@ -212,19 +230,11 @@ DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME = (
 > DB_NAME = os.getenv("PP_DB_NAME", "PhonePe")
 > ```
 
-Ensure your DB has the required tables referenced by the app (examples used in queries):
-
-* `agg_ins`, `agg_trans`, `agg_user`
-* `map_ins_hover`, `map_trans`, `map_user`
-* `top_ins`, `top_trans`, `top_user`
-
-These tables should contain the columns used by the queries (e.g., `year`, `quarter`, `state`, `payment_count`, `payment_amount`, etc.).
-
 ---
 
-### 4.6) Fix local file paths (one-time)
+### 4.8) Fix local file paths (one-time)
 
-In `StFiles/Insurance.py`, `StFiles/Transaction.py`, and `StFiles/User.py`, update any absolute Windows paths to use the `src/` folder. Example:
+Update any absolute Windows paths to project-relative paths under `src/`.
 
 ```python
 # BEFORE (absolute path)
@@ -234,7 +244,7 @@ DISTRICTS_PATH = "Y:\\Manikandan\\Guvi Class\\Projects\\PhonePe-Trans-Insights\\
 DISTRICTS_PATH = "src/india-districts-2019-734.json"
 ```
 
-Do the same for the CSVs:
+Do the same for CSVs:
 
 ```python
 # BEFORE
@@ -246,7 +256,7 @@ pd.read_csv("src/State Match.csv")
 pd.read_csv("src/District Match.csv")
 ```
 
-**Profile image (optional):** In `StFiles/MyProfile.py`, replace the hardcoded path with a project asset, e.g.:
+**Optional (profile image):** In `StFiles/MyProfile.py`:
 
 ```python
 show_circular_image("assets/avatar.png", 180)
@@ -254,7 +264,7 @@ show_circular_image("assets/avatar.png", 180)
 
 ---
 
-### 4.7) Run the app
+### 4.9) Run the app
 
 From the project root:
 
@@ -262,18 +272,16 @@ From the project root:
 streamlit run app.py
 ```
 
-Streamlit will print a local URL (e.g., `http://localhost:8501`). Open it in your browser.
+Then open the URL printed by Streamlit (e.g., `http://localhost:8501`).
 
 ---
 
-### 4.8) Troubleshooting (quick)
+### 4.10) Troubleshooting (quick)
 
-* **Cannot connect to DB**: verify host/port, firewall rules, and user privileges. Try `mysql -h <host> -u <user> -p`.
-* **GeoJSON errors / empty maps**: confirm `src/india-districts-2019-734.json` exists and has valid features; ensure `geopandas` is installed if reading TopoJSON.
-* **Import errors like `No module named StFiles`**: ensure folder name is `StFiles/` and `__init__.py` exists; run from repo root.
-* **Matplotlib/Altair rendering warnings**: usually harmless; keep `streamlit`, `altair`, `plotly`, `matplotlib` up to date.
-
----
+* **Cannot connect to DB:** verify host/port, firewall, and user privileges. Try `mysql -h <host> -u <user> -p`.
+* **GeoJSON errors / empty maps:** confirm `src/india-districts-2019-734.json` exists and is valid; ensure `geopandas` if reading TopoJSON.
+* **`No module named StFiles`:** make sure `StFiles/` exists with `__init__.py`, and you’re running from repo root.
+* **Matplotlib/Altair warnings:** usually harmless; keep `streamlit`, `altair`, `plotly`, `matplotlib` up to date.
 
 ## Usage
 
