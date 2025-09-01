@@ -1,7 +1,6 @@
-# Project Title
+# PhonePe Transaction Insights Dashboard
 
-A short description of your project (1–2 lines).  
-Optionally, add a tagline or project logo/banner.
+An interactive Streamlit dashboard for exploring India’s PhonePe transaction data across insurance, general transactions and user metrics. The app connects to a MySQL database, fetches aggregated metrics and visualizes them through dynamic bar/line charts and choropleth maps. Filters for year, quarter and state allow you to drill into specific regions or periods, and the top‑10 views highlight leading states, districts and pincodes.
 
 ---
 
@@ -21,24 +20,75 @@ Optionally, add a tagline or project logo/banner.
 ---
 
 ## About the Project
-- What problem it solves  
-- Why you built it  
-- Key highlights
+
+**PhonePe Transaction Insights Dashboard** is an interactive Streamlit app that turns raw PhonePe-style aggregates into **clean, explorable insights** across three domains:
+- **Insurance** (`agg_ins`, `top_ins`, `map_ins_hover`)
+- **Transactions** (`agg_trans`, `top_trans`, `map_trans`)
+- **Users** (`agg_user`, `top_user`, `map_user`)
+
+It ships with a **modular codebase** (`StFiles/`) that cleanly separates **layout**, **database access**, and **visualization** logic:
+- `stDBProcess.py` → secure MySQL access + cached lookups
+- `stGraph.py` → Altair/Plotly charts, choropleth helpers, string normalization
+- `Layout.py` → tabbed UX, filters, and orchestration
+- `Insurance.py`, `Transaction.py`, `User.py` → feature pages
+- `MyProfile.py` → sidebar profile card
+
+Geospatial visuals are powered by **Plotly choropleths**, with optional **GeoPandas** support for robust reading of Geo/TopoJSON. Real-world naming inconsistencies are handled via mapping files in `src/`:
+- `State Match.csv` (state normalization)
+- `District Match.csv` (district ↔ GeoJSON reconciliation)
+
+> (Optional) Add your flow illustration next to this section:  
+> `<img src="src/Flow%20Chart.png" width="720" alt="App flow">`
+
+
+### What problem it solves
+
+- **Fragmented analytics:** Raw aggregates live across multiple tables and levels (national/state/district/pincode). The app **stitches them together** into coherent stories.
+- **Hard cross-section comparisons:** It’s tough to compare **time (year/quarter)** against **geography (state/district)** and **category** in spreadsheets. Interactive charts make this **one-click**.
+- **Messy labels & mismatched names:** Real datasets contain hyphens, casing issues, legacy or split districts. Built-in **normalization & mapping** fix them so visuals “just work.”
+- **Static reporting loops:** Replaces static slides with a **live dashboard** so analysts and business users can self-serve, drill down, and export views instantly.
+
+
+### Why you built it
+
+- **Operational need:** To consistently monitor India’s digital payments story (adoption, usage, product mix) with **business-friendly visuals** and **repeatable filters**.
+- **Reusability:** A **template-quality** architecture you can reuse for other public or enterprise datasets—swap the tables, keep the UX.
+- **Learning & speed:** To consolidate hands-on skills in **Streamlit, SQL, Altair/Plotly, Geo/TopoJSON**, and deploy a tool that brings value **faster than ad-hoc notebooks**.
+- **Data quality guardrails:** To encode data hygiene (state/district mapping, casing, hyphen handling) into the product, not as a one-off script.
+
+
+### Key highlights
+
+- **🧭 Three lenses, one app:** Insurance • Transactions • Users — each with **yearly/quarterly overviews**, **Top-10 entities**, and **maps**.
+- **📈 Dual-axis insights:** Combined **bar + line** charts (e.g., Amount vs. Count) with sensible scales and tooltips for quick interpretation.
+- **🗺️ State & district heatmaps:** Toggle between **amount** and **count**; district choropleths auto-detect keys and handle Geo/TopoJSON gracefully.
+- **🎛️ Smart filters:** Multi-select **Year / Quarter / State** with **tab-locking** to avoid cross-filter confusion; clear to unlock and pivot quickly.
+- **🧹 Name normalization:** `normalize_state_name()` + **State/District mapping CSVs** eliminate label noise (hyphens, case, legacy spellings).
+- **⚡ Fast & cached:** `@st.cache_data(ttl=600)` keeps navigation snappy while hitting MySQL only when needed.
+- **🧩 Clean separation of concerns:** DB queries isolated from charts; pages remain thin and readable; easy to extend a new chart or KPI.
+- **🖥️ Portable paths:** Uses **project-relative** paths for GeoJSON/CSVs (`src/...`) so the app runs the same on Windows/macOS/Linux.
+- **🧪 Real-world ready:** Error messages for missing Geo keys, safe identifier checks for SQL objects, and defensive parsing for numerics.
+- **🛠️ Extensible:** Drop in new tables or KPIs (e.g., merchant segments, device mix) and reuse the same charting + mapping utilities.
+
 
 ---
 
 ## Features
-- ✅ Feature 1
-- ✅ Feature 2
-- ✅ Feature 3
+
+- ✅ **Interactive exploration across three lenses:** Insurance, Transactions, and Users in one dashboard.
+- ✅ **Dual-axis charts & Top-10 rankings:** Bar+line views (Amount vs Count) with quick comparisons by year/quarter/state.
+- ✅ **Toggleable heatmaps with smart filters:** State & district choropleths (amount/count) plus multi-select filters with tab locking.
+
 
 ---
 
 ## Tech Stack
-- **Frontend:** React / Streamlit / HTML-CSS  
-- **Backend:** Python / Node.js / PHP  
-- **Database:** MySQL / PostgreSQL / MongoDB  
-- **Others:** APIs, Libraries, Tools
+
+- ✅ **Frontend/UI:** Streamlit  
+- ✅ **Backend:** Python 3.10+ (modular Streamlit app under `StFiles/`)  
+- ✅ **Database:** MySQL (via SQLAlchemy + PyMySQL)  
+- ✅ **Others (Libraries & Tools):** Pandas, NumPy, Altair, Plotly, Matplotlib, Requests, Pathlib/JSON; *(optional for district maps)* GeoPandas, Shapely, Fiona; Data assets: GeoJSON + `src/State Match.csv`, `src/District Match.csv`
+
 
 ---
 
