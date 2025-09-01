@@ -4,22 +4,35 @@ An interactive **Streamlit** dashboard for exploring India’s PhonePe transacti
 
 ---
 
+<!-- Collapsible, numbered Table of Contents with subheadings -->
 <details>
   <summary><strong><mark>Table of Contents</mark></strong></summary>
 
-- [About the Project](#1-about-the-project)
-- [Features](#2-features)
-- [Tech Stack](#3-tech-stack)
-- [Installation](#4-installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Screenshots / Demo](#screenshots--demo)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+- [1. About the Project](#1-about-the-project)
+  - [1.1 What problem it solves](#11-what-problem-it-solves)
+  - [1.2 Why you built it](#12-why-you-built-it)
+  - [1.3 Key highlights](#13-key-highlights)
+- [2. Features](#2-features)
+- [3. Tech Stack](#3-tech-stack)
+- [4. Installation](#4-installation)
+  - [4.1 Prerequisites](#41-prerequisites)
+  - [4.2 Project layout](#42-project-layout)
+  - [4.3 Create and activate a virtual environment](#43-create-and-activate-a-virtual-environment)
+  - [4.4 Install dependencies](#44-install-dependencies)
+  - [4.5 Configure database connection](#45-configure-database-connection)
+  - [4.6 Fix local file paths (one-time)](#46-fix-local-file-paths-one-time)
+  - [4.7 Run the app](#47-run-the-app)
+  - [4.8 Troubleshooting (quick)](#48-troubleshooting-quick)
+- [5. Usage](#5-usage)
+- [6. Configuration](#6-configuration)
+- [7. Screenshots / Demo](#7-screenshots--demo)
+- [8. Project Structure](#8-project-structure)
+- [9. Contributing](#9-contributing)
+- [10. License](#10-license)
+- [11. Contact](#11-contact)
 
 </details>
+
 
 ---
 
