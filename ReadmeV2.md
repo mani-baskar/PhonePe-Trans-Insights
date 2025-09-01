@@ -1,14 +1,16 @@
 # PhonePe Transaction Insights Dashboard
 
-An interactive Streamlit dashboard for exploring India’s PhonePe transaction data across insurance, general transactions and user metrics. The app connects to a MySQL database, fetches aggregated metrics and visualizes them through dynamic bar/line charts and choropleth maps. Filters for year, quarter and state allow you to drill into specific regions or periods, and the top‑10 views highlight leading states, districts and pincodes.
+An interactive **Streamlit** dashboard for exploring India’s PhonePe transaction data across insurance, general transactions and user metrics. The app connects to a MySQL database, fetches aggregated metrics and visualizes them through dynamic bar/line charts and choropleth maps. Filters for year, quarter and state allow you to drill into specific regions or periods, and the top-10 views highlight leading states, districts and pincodes.
 
 ---
 
-## Table of Contents
-- [About the Project](#about-the-project)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Installation](#installation)
+<details>
+  <summary><strong><mark>Table of Contents</mark></strong></summary>
+
+- [About the Project](#1-about-the-project)
+- [Features](#2-features)
+- [Tech Stack](#3-tech-stack)
+- [Installation](#4-installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Screenshots / Demo](#screenshots--demo)
@@ -17,9 +19,11 @@ An interactive Streamlit dashboard for exploring India’s PhonePe transaction d
 - [License](#license)
 - [Contact](#contact)
 
+</details>
+
 ---
 
-## About the Project
+## 1. About the Project
 
 **PhonePe Transaction Insights Dashboard** is an interactive Streamlit app that turns raw PhonePe-style aggregates into **clean, explorable insights** across three domains:
 - **Insurance** (`agg_ins`, `top_ins`, `map_ins_hover`)
@@ -27,9 +31,9 @@ An interactive Streamlit dashboard for exploring India’s PhonePe transaction d
 - **Users** (`agg_user`, `top_user`, `map_user`)
 
 It ships with a **modular codebase** (`StFiles/`) that cleanly separates **layout**, **database access**, and **visualization** logic:
-- `stDBProcess.py` → secure MySQL access + cached lookups
+- `stDBProcess.py` → MySQL access (SQLAlchemy + PyMySQL) + cached lookups
 - `stGraph.py` → Altair/Plotly charts, choropleth helpers, string normalization
-- `Layout.py` → tabbed UX, filters, and orchestration
+- `Layout.py` → tabbed UX, filters, orchestration
 - `Insurance.py`, `Transaction.py`, `User.py` → feature pages
 - `MyProfile.py` → sidebar profile card
 
@@ -41,7 +45,7 @@ Geospatial visuals are powered by **Plotly choropleths**, with optional **GeoPan
 > `<img src="src/Flow%20Chart.png" width="720" alt="App flow">`
 
 
-### What problem it solves
+### 1.1 What problem it solves
 
 - **Fragmented analytics:** Raw aggregates live across multiple tables and levels (national/state/district/pincode). The app **stitches them together** into coherent stories.
 - **Hard cross-section comparisons:** It’s tough to compare **time (year/quarter)** against **geography (state/district)** and **category** in spreadsheets. Interactive charts make this **one-click**.
@@ -49,93 +53,75 @@ Geospatial visuals are powered by **Plotly choropleths**, with optional **GeoPan
 - **Static reporting loops:** Replaces static slides with a **live dashboard** so analysts and business users can self-serve, drill down, and export views instantly.
 
 
-### Why you built it
+### 1.2 Why you built it
 
-- **Operational need:** To consistently monitor India’s digital payments story (adoption, usage, product mix) with **business-friendly visuals** and **repeatable filters**.
-- **Reusability:** A **template-quality** architecture you can reuse for other public or enterprise datasets—swap the tables, keep the UX.
-- **Learning & speed:** To consolidate hands-on skills in **Streamlit, SQL, Altair/Plotly, Geo/TopoJSON**, and deploy a tool that brings value **faster than ad-hoc notebooks**.
-- **Data quality guardrails:** To encode data hygiene (state/district mapping, casing, hyphen handling) into the product, not as a one-off script.
+- **Operational need:** Monitor India’s digital payments story (adoption, usage, product mix) with **business-friendly visuals** and **repeatable filters**.
+- **Reusability:** A **template-quality** architecture you can reuse for other datasets—swap the tables, keep the UX.
+- **Learning & speed:** Consolidate hands-on skills in **Streamlit, SQL, Altair/Plotly, Geo/TopoJSON** and deliver value **faster than ad-hoc notebooks**.
+- **Data quality guardrails:** Bake state/district mapping, casing, and hyphen handling into the product—not as one-off scripts.
 
 
-### Key highlights
+### 1.3 Key highlights
 
 - **🧭 Three lenses, one app:** Insurance • Transactions • Users — each with **yearly/quarterly overviews**, **Top-10 entities**, and **maps**.
-- **📈 Dual-axis insights:** Combined **bar + line** charts (e.g., Amount vs. Count) with sensible scales and tooltips for quick interpretation.
-- **🗺️ State & district heatmaps:** Toggle between **amount** and **count**; district choropleths auto-detect keys and handle Geo/TopoJSON gracefully.
-- **🎛️ Smart filters:** Multi-select **Year / Quarter / State** with **tab-locking** to avoid cross-filter confusion; clear to unlock and pivot quickly.
+- **📈 Dual-axis insights:** Combined **bar + line** charts (e.g., Amount vs. Count) with sensible scales and tooltips.
+- **🗺️ State & district heatmaps:** Toggle between **amount** and **count**; district choropleths auto-detect keys and handle Geo/TopoJSON.
+- **🎛️ Smart filters:** Multi-select **Year / Quarter / State** with **tab-locking** to avoid cross-filter confusion.
 - **🧹 Name normalization:** `normalize_state_name()` + **State/District mapping CSVs** eliminate label noise (hyphens, case, legacy spellings).
 - **⚡ Fast & cached:** `@st.cache_data(ttl=600)` keeps navigation snappy while hitting MySQL only when needed.
-- **🧩 Clean separation of concerns:** DB queries isolated from charts; pages remain thin and readable; easy to extend a new chart or KPI.
-- **🖥️ Portable paths:** Uses **project-relative** paths for GeoJSON/CSVs (`src/...`) so the app runs the same on Windows/macOS/Linux.
-- **🧪 Real-world ready:** Error messages for missing Geo keys, safe identifier checks for SQL objects, and defensive parsing for numerics.
-- **🛠️ Extensible:** Drop in new tables or KPIs (e.g., merchant segments, device mix) and reuse the same charting + mapping utilities.
-
+- **🧩 Clean separation of concerns:** DB queries isolated from charts; pages remain thin and readable.
+- **🖥️ Portable paths:** Uses **project-relative** paths for GeoJSON/CSVs (`src/...`) across OSes.
+- **🧪 Real-world ready:** Helpful errors for missing Geo keys, safe identifier checks for SQL objects, defensive parsing.
 
 ---
 
-## Features
+## 2. Features
 
 - ✅ **Interactive exploration across three lenses:** Insurance, Transactions, and Users in one dashboard.
 - ✅ **Dual-axis charts & Top-10 rankings:** Bar+line views (Amount vs Count) with quick comparisons by year/quarter/state.
 - ✅ **Toggleable heatmaps with smart filters:** State & district choropleths (amount/count) plus multi-select filters with tab locking.
 
-
 ---
 
-## Tech Stack
+## 3. Tech Stack
 
 - ✅ **Frontend/UI:** Streamlit  
-- ✅ **Backend:** Python 3.10+ (modular Streamlit app under `StFiles/`)  
+- ✅ **Backend:** Python 3.10+  
 - ✅ **Database:** MySQL (via SQLAlchemy + PyMySQL)  
-- ✅ **Others (Libraries & Tools):** Pandas, NumPy, Altair, Plotly, Matplotlib, Requests, Pathlib/JSON; *(optional for district maps)* GeoPandas, Shapely, Fiona; Data assets: GeoJSON + `src/State Match.csv`, `src/District Match.csv`
-
+- ✅ **Libraries & Tools:** Pandas, NumPy, Altair, Plotly, Matplotlib, Requests, Pathlib/JSON; *(optional for district maps)* GeoPandas, Shapely, Fiona; Data assets: GeoJSON + `src/State Match.csv`, `src/District Match.csv`
 
 ---
 
-## Installation
-```bash
-# Clone the repo
-git clone https://github.com/username/repo-name.git
-
-# Navigate to project folder
-cd repo-name
-
-# Install dependencies
-pip install -r requirements.txt   # or npm install
-````
-
-## Installation
+## 4. Installation
 
 <details>
-  <summary><strong><mark> Installation steps</mark></strong> — click to expand</summary>
+  <summary><strong>🚀 Installation steps (click to expand)</strong></summary>
 
-- [1) Prerequisites](#1-prerequisites)
-- [2) Project layout](#2-project-layout)
-- [3) Create and activate a virtual environment](#3-create-and-activate-a-virtual-environment)
-- [4) Install dependencies](#4-install-dependencies)
-- [5) Configure database connection](#5-configure-database-connection)
-- [6) Fix local file paths (one-time)](#6-fix-local-file-paths-one-time)
-- [7) Run the app](#7-run-the-app)
-- [8) Troubleshooting (quick)](#8-troubleshooting-quick)
+- [1) Prerequisites](#41-prerequisites)  
+- [2) Project layout](#42-project-layout)  
+- [3) Create and activate a virtual environment](#43-create-and-activate-a-virtual-environment)  
+- [4) Install dependencies](#44-install-dependencies)  
+- [5) Configure database connection](#45-configure-database-connection)  
+- [6) Fix local file paths (one-time)](#46-fix-local-file-paths-one-time)  
+- [7) Run the app](#47-run-the-app)  
+- [8) Troubleshooting (quick)](#48-troubleshooting-quick)
 
 </details>
 
-
-
 Follow these steps to run the **PhonePe Transaction Insights Dashboard** locally.
 
-### 1) Prerequisites
-- **Python** 3.10 or newer
-- **MySQL** 8.x (or compatible) server with network access
-- **Git** (optional, for cloning)
-- (Optional, for TopoJSON/GeoJSON handling) **GDAL stack** via `geopandas`, `fiona`, `shapely`
+### 4.1) Prerequisites
+- **Python** 3.10 or newer  
+- **MySQL** 8.x (or compatible) server with network access  
+- **Git** (optional, for cloning)  
+- *(Optional, for TopoJSON/GeoJSON handling)* **GDAL stack** via `geopandas`, `fiona`, `shapely`
 
-> Windows tip for Geo stack: prefer `pip install geopandas` first (it pulls prebuilt wheels). If it fails, install via Conda:  
+> Windows tip for Geo stack: prefer `pip install geopandas` first (prebuilt wheels). If it fails, install via Conda:  
 > `conda install -c conda-forge geopandas fiona shapely gdal`
 
 ---
 
-### 2) Project layout
+### 4.2) Project layout
 
 Create this structure (move your files accordingly):
 
@@ -156,7 +142,7 @@ PhonePe-Trans-Insights/
 │  ├─ State Match.csv
 │  ├─ District Match.csv
 │  └─ india-districts-2019-734.json   # download/place this file here
-└─ assets/ (optional: logos, avatars, etc.)
+└─ assets/            # (optional: logos, images, avatar, etc.)
 
 ````
 
@@ -164,7 +150,7 @@ Create an empty `__init__.py` so `StFiles` is treated as a Python package.
 
 ---
 
-### 3) Create and activate a virtual environment
+### 4.3) Create and activate a virtual environment
 
 **Windows (PowerShell)**
 ```bash
@@ -181,21 +167,18 @@ source .venv/bin/activate
 
 ---
 
-### 4) Install dependencies
+### 4.4) Install dependencies
 
 ```bash
 pip install --upgrade pip
-pip install streamlit pandas numpy sqlalchemy pymysql altair plotly requests
+pip install streamlit pandas numpy sqlalchemy pymysql altair plotly requests matplotlib
 # Optional (recommended for district maps & TopoJSON/GeoJSON convenience)
 pip install geopandas shapely fiona
-# If you see errors with the above on Windows, use conda-forge as noted in step 1.
-# Also required by app.py charts:
-pip install matplotlib
 ```
 
 ---
 
-### 5) Configure database connection
+### 4.5) Configure database connection
 
 Open `StFiles/stDBProcess.py` and set your MySQL credentials/host/database:
 
@@ -226,7 +209,7 @@ These tables should contain the columns used by the queries (e.g., `year`, `quar
 
 ---
 
-### 6) Fix local file paths (one-time)
+### 4.6) Fix local file paths (one-time)
 
 In `StFiles/Insurance.py`, `StFiles/Transaction.py`, and `StFiles/User.py`, update any absolute Windows paths to use the `src/` folder. Example:
 
@@ -258,7 +241,7 @@ show_circular_image("assets/avatar.png", 180)
 
 ---
 
-### 7) Run the app
+### 4.7) Run the app
 
 From the project root:
 
@@ -270,72 +253,141 @@ Streamlit will print a local URL (e.g., `http://localhost:8501`). Open it in you
 
 ---
 
-### 8) Troubleshooting (quick)
+### 4.8) Troubleshooting (quick)
 
 * **Cannot connect to DB**: verify host/port, firewall rules, and user privileges. Try `mysql -h <host> -u <user> -p`.
 * **GeoJSON errors / empty maps**: confirm `src/india-districts-2019-734.json` exists and has valid features; ensure `geopandas` is installed if reading TopoJSON.
-* **Import errors like `No module named StFiles`**: ensure the folder name is `StFiles/` and `__init__.py` exists; run from repo root.
-* **Matplotlib/Altair rendering warnings**: usually harmless; ensure the latest `streamlit`, `altair`, `plotly`, `matplotlib`.
-
-You’re all set! Launch the app, select a tab (Insurance/Transactions/Users), and explore India’s digital payments story interactively.
+* **Import errors like `No module named StFiles`**: ensure folder name is `StFiles/` and `__init__.py` exists; run from repo root.
+* **Matplotlib/Altair rendering warnings**: usually harmless; keep `streamlit`, `altair`, `plotly`, `matplotlib` up to date.
 
 ---
 
 ## Usage
 
 ```bash
-# Run the app
-python app.py      # or streamlit run app.py
+# Preferred
+streamlit run app.py
 ```
 
 ---
 
 ## Configuration
 
-* `.env` file setup (if any)
-* API keys or database connection info
-* Custom configs
+* Use environment variables (recommended) for DB credentials (see Installation §4.5).
+* Place Geo/CSV assets in `src/`.
+* Optional: `.env` + a small loader if you prefer (`python-dotenv`).
 
 ---
 
 ## Screenshots / Demo
 
-(Add images or GIFs here for better presentation)
+> Add screenshots or GIFs here for better presentation.
+>
+> Example embed:
+>
+> ```md
+> <p align="center">
+>   <img src="src/Flow%20Chart.png" alt="App flow" width="720">
+> </p>
+> ```
 
 ---
 
 ## Project Structure
 
 ```
-repo-name/
-│-- src/
-│-- data/
-│-- docs/
-│-- tests/
-│-- README.md
-│-- requirements.txt
+PhonePe-Trans-Insights/
+├─ app.py
+├─ StFiles/
+│  ├─ __init__.py
+│  ├─ Layout.py
+│  ├─ Insurance.py
+│  ├─ Transaction.py
+│  ├─ User.py
+│  ├─ stDBProcess.py
+│  ├─ stGraph.py
+│  └─ MyProfile.py
+├─ src/
+│  ├─ State Match.csv
+│  ├─ District Match.csv
+│  └─ india-districts-2019-734.json
+└─ assets/
 ```
 
 ---
 
 ## Contributing
 
-Contributions are welcome!
+Contributions are welcome! 🎉 Bug fixes, new charts/pages, docs, and state/district mapping improvements are all appreciated.
 
-1. Fork the repo
-2. Create a branch (`git checkout -b feature-name`)
-3. Commit changes (`git commit -m 'Add new feature'`)
-4. Push branch (`git push origin feature-name`)
-5. Create Pull Request
+### How to contribute
+
+1. **Fork** this repository
+2. **Create a branch**
+
+   ```bash
+   git checkout -b feature/<short-title>
+   ```
+3. **Set up your env** (from repo root)
+
+   ```bash
+   python -m venv .venv
+   # Windows: .venv\Scripts\Activate.ps1
+   # macOS/Linux:
+   source .venv/bin/activate
+
+   pip install --upgrade pip
+   pip install streamlit pandas numpy sqlalchemy pymysql altair plotly requests matplotlib
+   # Optional for district maps:
+   pip install geopandas shapely fiona
+   ```
+4. **Run locally**
+
+   ```bash
+   streamlit run app.py
+   ```
+5. **Commit**
+
+   ```bash
+   git add -A
+   git commit -m "feat: add <what> to <where>"
+   ```
+6. **Push**
+
+   ```bash
+   git push origin feature/<short-title>
+   ```
+7. **Open a Pull Request (PR)** with a clear title and description
+
+### Project conventions
+
+* **Structure:** keep app code under `StFiles/`; use project-relative paths
+* **Database:** never commit real credentials; prefer environment variables
+* **Charts/Maps:** reuse helpers in `stGraph.py`; cache heavy calls with `@st.cache_data`
+* **Data hygiene:** use provided state/district normalization & mapping CSVs
+
+### PR checklist
+
+* [ ] Works in relevant tab(s) (Insurance/Transactions/Users)
+* [ ] No hard-coded credentials or absolute paths
+* [ ] Reuses chart/map helpers where possible
+* [ ] Queries return non-empty data for example filters
+* [ ] README/docs updated if behavior/setup changed
+
+---
+
+## License
+
+This project is licensed under the **MIT License**.
+See the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## Contact
 
-👤 **Your Name**
+👤 **Manikandan Baskar**
 
 * Email: [mani111355@gmail.com](mailto:mani111355@gmail.com)
 * LinkedIn: [Manikandan Baskar](https://linkedin.com/in/mani-baskar)
 * GitHub: [@mani-baskar](https://github.com/mani-baskar)
 
----
