@@ -314,29 +314,6 @@ streamlit run app.py
 
 ---
 
-## Project Structure
-
-```
-PhonePe-Trans-Insights/
-├─ app.py
-├─ StFiles/
-│  ├─ __init__.py
-│  ├─ Layout.py
-│  ├─ Insurance.py
-│  ├─ Transaction.py
-│  ├─ User.py
-│  ├─ stDBProcess.py
-│  ├─ stGraph.py
-│  └─ MyProfile.py
-├─ src/
-│  ├─ State Match.csv
-│  ├─ District Match.csv
-│  └─ india-districts-2019-734.json
-└─ assets/
-```
-
----
-
 ## Contributing
 
 Contributions are welcome! 🎉 Bug fixes, new charts/pages, docs, and state/district mapping improvements are all appreciated.
