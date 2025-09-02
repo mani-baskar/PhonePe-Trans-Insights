@@ -292,14 +292,6 @@ streamlit run app.py
 
 ---
 
-## Configuration
-
-* Use environment variables (recommended) for DB credentials (see Installation §4.5).
-* Place Geo/CSV assets in `src/`.
-* Optional: `.env` + a small loader if you prefer (`python-dotenv`).
-
----
-
 ## Screenshots / Demo
 
 > Add screenshots or GIFs here for better presentation.
@@ -311,13 +303,6 @@ streamlit run app.py
 >   <img src="src/Flow%20Chart.png" alt="App flow" width="720">
 > </p>
 > ```
-
----
-
-## License
-
-This project is licensed under the **MIT License**.
-See the [LICENSE](LICENSE) file for details.
 
 ---
 
