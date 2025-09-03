@@ -58,8 +58,10 @@ Geospatial visuals use **Plotly choropleths**, with optional **GeoPandas** for G
 - `State Match.csv` (state normalization)
 - `District Match.csv` (district ↔ GeoJSON reconciliation)
 
-> *(Optional)* Add your flow illustration here:  
-> `<img src="src/Flow%20Chart.png" width="720" alt="App flow">`
+<p align="center">
+  <img src="assets/Flow%20chart.png" width="980" alt="app Flow">
+  <br><em>App Process Flow</em>
+</p>
 
 ### 1.1 What problem it solves
 - **Fragmented analytics** across levels (national/state/district/pincode) → unified, coherent stories.  
@@ -152,7 +154,6 @@ pip install streamlit pandas numpy sqlalchemy pymysql altair plotly requests mat
 pip install geopandas shapely fiona
 ```
 
-> If a `requirements.txt` exists: `pip install -r requirements.txt`
 
 ### 4.5) Project layout
 
@@ -177,8 +178,6 @@ PhonePe-Trans-Insights/
 └─ assets/     # (optional: logos, images, avatar, etc.)
 ```
 
-> Create an empty `StFiles/__init__.py` so `StFiles` is treated as a package.
-
 ### 4.6) Insert PhonePe data into MySQL
 
 * **Schema:** import `DBTable.sql` into MySQL (creates required tables).
@@ -195,17 +194,6 @@ DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME = (
     "<user>", "<password>", "<host>", "3306", "<database_name>"
 )
 ```
-
-> **Best practice:** keep creds out of code.
->
-> ```python
-> import os
-> DB_USER = os.getenv("PP_DB_USER", "root")
-> DB_PASS = os.getenv("PP_DB_PASS", "")
-> DB_HOST = os.getenv("PP_DB_HOST", "127.0.0.1")
-> DB_PORT = os.getenv("PP_DB_PORT", "3306")
-> DB_NAME = os.getenv("PP_DB_NAME", "PhonePe")
-> ```
 
 ### 4.8) Fix local file paths (one-time)
 
@@ -251,7 +239,7 @@ Open the URL Streamlit prints (e.g., `http://localhost:8501`).
 ## 5. Usage
 
 Follow these steps to explore insights and reproduce the results shown in the screenshots.
-*(All images below are in the `assets/` folder; spaces are URL-encoded as `%20`.)*
+
 
 ### 5.1) Start the app
 
