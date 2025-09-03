@@ -283,12 +283,159 @@ Then open the URL printed by Streamlit (e.g., `http://localhost:8501`).
 * **`No module named StFiles`:** make sure `StFiles/` exists with `__init__.py`, and you’re running from repo root.
 * **Matplotlib/Altair warnings:** usually harmless; keep `streamlit`, `altair`, `plotly`, `matplotlib` up to date.
 
-## Usage
+## 5. Usage
 
+Follow these steps to explore insights and reproduce the results shown in the screenshots.
+
+---
+
+### 5.1) Start the app
 ```bash
-# Preferred
 streamlit run app.py
-```
+````
+
+Open the URL shown in the terminal (e.g., `http://localhost:8501`).
+
+---
+
+### 5.2) Understand the layout
+
+* **Tabs:** `Insurance` • `Transaction` • `User`
+* **Filters:** three expandable controls at the top — **Year**, **Quarterly**, **State**
+* **Actions:** a **Process** button per tab (e.g., *Insurance Process*) and a **Clear** button to reset that tab.
+
+<p align="center">
+  <img src="assets/Filter%201.png" alt="Landing page with filters and Process button" width="980">
+  <br><em>Landing view with filters and the Process/Clear actions.</em>
+</p>
+
+> The **Filter Conditions** panel shows the currently applied SQL-style clauses built from your selections.
+
+---
+
+### 5.3) Run a query (filters → process)
+
+1. Expand **Year**, **Quarterly**, and/or **State** and choose values.
+2. Click the tab’s **Process** button.
+3. The dashboard renders:
+
+   * **National Overview** charts (if no filters)
+   * or **Filtered** charts + **Heatmaps** + **Top-10** entities (when filters are applied)
+
+> Tip: If another tab shows a yellow banner saying it’s disabled, clear filters in the tab you last used (tab-locking avoids cross-filter confusion).
+
+<p align="center">
+  <img src="assets/Filter%206.png" alt="User tab disabled banner" width="980"><br>
+  <em>Tab-locking notice: clear filters in the other tab to enable this one.</em>
+</p>
+
+<p align="center">
+  <img src="assets/Filter%205.png" alt="Transaction tab disabled banner" width="980"><br>
+  <em>Another example of the tab-locking notice.</em>
+</p>
+
+---
+
+### 5.4) Insurance tab — what you’ll see
+
+**A) National overview (no filters)**
+Yearly & quarterly trends + Top states.
+
+<p align="center">
+  <img src="assets/Ins%20Screenshot%201.png" alt="Insurance national overview" width="980">
+</p>
+
+**B) Heatmaps**
+State & district choropleths. Use the toggle to switch **Amount ↔ Count**.
+
+<p align="center">
+  <img src="assets/Ins%20Screenshot%202.png" alt="Insurance heatmaps" width="980">
+</p>
+
+**C) Top-10 entities**
+Top states, districts, and pincodes with a cumulative line.
+
+<p align="center">
+  <img src="assets/Ins%20Screenshot%203.png" alt="Insurance Top 10 charts" width="980">
+</p>
+
+**D) Filtered example**
+After selecting years/states and clicking **Insurance Process**, the page shows filtered SQL previews, heatmaps, and top-10s:
+
+<p align="center">
+  <img src="assets/Filter%202.png" alt="Insurance filtered overview" width="980"><br>
+  <em>Filtered Overview: Yearly/Quarterly trends for your selection.</em>
+</p>
+
+<p align="center">
+  <img src="assets/Filter%204.png" alt="Insurance heatmaps filtered" width="980"><br>
+  <em>Filtered Heatmaps: distribution across the selected geography.</em>
+</p>
+
+<p align="center">
+  <img src="assets/Filter%203.png" alt="Insurance Top 10 filtered" width="980"><br>
+  <em>Filtered Top-10: leading State/District/Pincode entities.</em>
+</p>
+
+---
+
+### 5.5) Transaction tab — what you’ll see
+
+**A) National overview (no filters)**
+
+<p align="center">
+  <img src="assets/Trans%20Screenshot%201.png" alt="Transactions national overview" width="980">
+</p>
+
+**B) Heatmaps (Amount ↔ Count toggle)**
+
+<p align="center">
+  <img src="assets/Trans%20Screenshot%202.png" alt="Transactions heatmaps" width="980">
+</p>
+
+**C) Top-10 entities**
+
+<p align="center">
+  <img src="assets/Trans%20Screenshot%203.png" alt="Transactions Top 10 charts" width="980">
+</p>
+
+---
+
+### 5.6) User tab — what you’ll see
+
+**A) National overview (no filters)**
+
+<p align="center">
+  <img src="assets/User%20Screenshot%201.png" alt="Users national overview" width="980">
+</p>
+
+**B) Heatmaps (Registered Users ↔ App Opens toggle)**
+
+<p align="center">
+  <img src="assets/User%20Screenshot%202.png" alt="Users heatmaps" width="980">
+</p>
+
+**C) Top-10 entities**
+
+<p align="center">
+  <img src="assets/User%20Screenshot%203.png" alt="Users Top 10 charts" width="980">
+</p>
+
+---
+
+### 5.7) Clearing filters & switching tabs
+
+* Use **Clear Insurance / Clear Transaction / Clear User** to reset that tab.
+* If you see a **tab disabled** banner, first clear filters in the previously used tab, then return.
+
+---
+
+### 5.8) Notes & tips
+
+* **Toggles on heatmaps:** Quickly switch the color scale metric (Amount vs Count / Registered Users vs App Opens).
+* **Tooltips:** Hover bars/points/regions to see exact values.
+* **Performance:** Large selections are cached (`@st.cache_data`), so repeated queries are faster.
+* **Images in this README:** If your filenames have spaces, URLs use `%20` (e.g., `assets/Ins%20Screenshot%201.png`). Renaming to `Ins-Screenshot-1.png` also works.
 
 ---
 
