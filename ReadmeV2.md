@@ -435,7 +435,6 @@ After selecting years/states and clicking **Insurance Process**, the page shows 
 * **Toggles on heatmaps:** Quickly switch the color scale metric (Amount vs Count / Registered Users vs App Opens).
 * **Tooltips:** Hover bars/points/regions to see exact values.
 * **Performance:** Large selections are cached (`@st.cache_data`), so repeated queries are faster.
-* **Images in this README:** If your filenames have spaces, URLs use `%20` (e.g., `assets/Ins%20Screenshot%201.png`). Renaming to `Ins-Screenshot-1.png` also works.
 
 ---
 
