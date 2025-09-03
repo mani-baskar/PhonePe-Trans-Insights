@@ -185,6 +185,19 @@ PhonePe-Trans-Insights/
 * Ensure these tables exist & are populated:
   `agg_ins`, `agg_trans`, `agg_user`, `map_ins_hover`, `map_trans`, `map_user`, `top_ins`, `top_trans`, `top_user`.
 
+
+
+<details>
+  <summary><Mark><strong>Screenshots (click to expand)</strong></Mark></summary>
+<p align="center">
+  <img src="assets/SQL%20Import%201.png" width="900" alt="Screenshot 1"><br>
+  <img src="assets/SQL%20Import%202.png" width="900" alt="Screenshot 2"><br>
+  <img src="assets/SQL%20Import%203.png" width="900" alt="Screenshot 3">
+</p>
+
+</details>
+
+
 ### 4.7) Configure database connection
 
 Edit `StFiles/stDBProcess.py`:
