@@ -349,14 +349,14 @@ Yearly & quarterly trends + Top states.
 State & district choropleths. Use the toggle to switch **Amount ↔ Count**.
 
 <p align="center">
-  <img src="assets/Ins%20Screenshot%202.png" alt="Insurance heatmaps" width="980">
+  <img src="assets/Ins%20Screenshot%203.png" alt="Insurance heatmaps" width="980">
 </p>
 
 **C) Top-10 entities**
 Top states, districts, and pincodes with a cumulative line.
 
 <p align="center">
-  <img src="assets/Ins%20Screenshot%203.png" alt="Insurance Top 10 charts" width="980">
+  <img src="assets/Ins%20Screenshot%202.png" alt="Insurance Top 10 charts" width="980">
 </p>
 
 **D) Filtered example**
@@ -390,13 +390,13 @@ After selecting years/states and clicking **Insurance Process**, the page shows 
 **B) Heatmaps (Amount ↔ Count toggle)**
 
 <p align="center">
-  <img src="assets/Trans%20Screenshot%202.png" alt="Transactions heatmaps" width="980">
+  <img src="assets/Trans%20Screenshot%203.png" alt="Transactions heatmaps" width="980">
 </p>
 
 **C) Top-10 entities**
 
 <p align="center">
-  <img src="assets/Trans%20Screenshot%203.png" alt="Transactions Top 10 charts" width="980">
+  <img src="assets/Trans%20Screenshot%202.png" alt="Transactions Top 10 charts" width="980">
 </p>
 
 ---
@@ -412,13 +412,13 @@ After selecting years/states and clicking **Insurance Process**, the page shows 
 **B) Heatmaps (Registered Users ↔ App Opens toggle)**
 
 <p align="center">
-  <img src="assets/User%20Screenshot%202.png" alt="Users heatmaps" width="980">
+  <img src="assets/User%20Screenshot%203.png" alt="Users heatmaps" width="980">
 </p>
 
 **C) Top-10 entities**
 
 <p align="center">
-  <img src="assets/User%20Screenshot%203.png" alt="Users Top 10 charts" width="980">
+  <img src="assets/User%20Screenshot%202.png" alt="Users Top 10 charts" width="980">
 </p>
 
 ---
@@ -436,20 +436,6 @@ After selecting years/states and clicking **Insurance Process**, the page shows 
 * **Tooltips:** Hover bars/points/regions to see exact values.
 * **Performance:** Large selections are cached (`@st.cache_data`), so repeated queries are faster.
 * **Images in this README:** If your filenames have spaces, URLs use `%20` (e.g., `assets/Ins%20Screenshot%201.png`). Renaming to `Ins-Screenshot-1.png` also works.
-
----
-
-## Screenshots / Demo
-
-> Add screenshots or GIFs here for better presentation.
->
-> Example embed:
->
-> ```md
-> <p align="center">
->   <img src="src/Flow%20Chart.png" alt="App flow" width="720">
-> </p>
-> ```
 
 ---
 
